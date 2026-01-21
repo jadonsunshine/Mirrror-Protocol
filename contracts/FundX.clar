@@ -77,3 +77,51 @@
     bool
 )
 
+;; ============================================
+;; READ-ONLY FUNCTIONS
+;; ============================================
+;; These functions let anyone view data without changing anything
+;; They don't cost any gas/fees to call
+
+;; Get all details about a specific campaign
+;; Returns: campaign data if it exists, or nothing if not found
+(define-read-only (get-campaign (campaign-id uint))
+    (map-get? campaigns campaign-id)
+)
+
+;; Get how much a specific person donated to a specific campaign
+;; Returns: donation amount (or 0 if they haven't donated)
+(define-read-only (get-donation (campaign-id uint) (donor principal))
+    (default-to u0 (map-get? donations { campaign-id: campaign-id, donor: donor }))
+)
+
+;; Get the total number of campaigns created on the platform
+;; Returns: total campaign count
+(define-read-only (get-total-campaigns)
+    (var-get campaign-nonce)
+)
+
+;; Check if a campaign's deadline has passed
+;; Returns: true if ended, false if still running
+(define-read-only (is-campaign-ended (campaign-id uint))
+    (match (map-get? campaigns campaign-id)
+        campaign (>= block-height (get deadline campaign))
+        false
+    )
+)
+
+;; Check if a campaign has reached its funding goal
+;; Returns: true if goal reached, false otherwise
+(define-read-only (is-goal-reached (campaign-id uint))
+    (match (map-get? campaigns campaign-id)
+        campaign (>= (get total-raised campaign) (get goal campaign))
+        false
+    )
+)
+
+;; Calculate the 2% platform fee for a given amount
+;; Returns: fee amount
+(define-read-only (calculate-platform-fee (amount uint))
+    (/ (* amount platform-fee-percent) fee-denominator)
+)
+
