@@ -168,3 +168,76 @@
     )
 )
 
+;; DONATE TO A CAMPAIGN
+;; Parameters:
+;;   - campaign-id: which campaign to donate to
+;;   - amount: how much USDCx to donate
+;; Returns: how much was actually donated and how much was refunded
+;; 
+;; Smart donation logic:
+;; If campaign needs $10 more and you donate $20, only $10 is taken
+;; and $10 is automatically "refunded" (never transferred in the first place)
+(define-public (donate (campaign-id uint) (amount uint))
+    (let
+        (
+            ;; Get the campaign details (or fail if it doesn't exist)
+            (campaign (unwrap! (map-get? campaigns campaign-id) err-not-found))
+            ;; How much has been raised so far
+            (current-raised (get total-raised campaign))
+            ;; The fundraising goal
+            (goal (get goal campaign))
+            ;; How much more is needed to reach the goal
+            (remaining (- goal current-raised))
+            ;; How much we'll actually accept (either full amount or just what's needed)
+            (actual-donation (if (<= amount remaining) amount remaining))
+            ;; How much to "refund" (by not taking it in the first place)
+            (refund (- amount actual-donation))
+        )
+        ;; VALIDATION CHECKS - make sure donation is valid
+        
+        ;; Campaign must still be active
+        (asserts! (get active campaign) err-campaign-ended)
+        ;; Campaign deadline must not have passed
+        (asserts! (< block-height (get deadline campaign)) err-campaign-ended)
+        ;; Goal must not already be reached
+        (asserts! (< current-raised goal) err-goal-reached)
+        ;; Donation amount must be greater than 0
+        (asserts! (> amount u0) err-invalid-amount)
+        
+        ;; TRANSFER THE DONATION
+        ;; Only transfer what's actually needed (not the full amount if overpaying)
+        (if (> actual-donation u0)
+            (try! (contract-call? usdcx-token transfer 
+                actual-donation           ;; Amount to transfer
+                tx-sender                 ;; From the donor
+                (as-contract tx-sender)   ;; To this contract
+                none))                    ;; No memo
+            true  ;; If actual-donation is 0, just continue
+        )
+        
+        ;; NOTE: Refund happens automatically - we simply don't transfer the excess
+        
+        ;; UPDATE RECORDS
+        
+        ;; Track this person's total donations to this campaign
+        (map-set donations 
+            { campaign-id: campaign-id, donor: tx-sender }
+            (+ (get-donation campaign-id tx-sender) actual-donation)
+        )
+        
+        ;; Mark this person as a donor for this campaign
+        (map-set campaign-donors
+            { campaign-id: campaign-id, donor: tx-sender }
+            true
+        )
+        
+        ;; Update the campaign's total raised amount
+        (map-set campaigns campaign-id
+            (merge campaign { total-raised: (+ current-raised actual-donation) })
+        )
+        
+        ;; Return success with donation and refund amounts
+        (ok { donated: actual-donation, refunded: refund })
+    )
+)
+
