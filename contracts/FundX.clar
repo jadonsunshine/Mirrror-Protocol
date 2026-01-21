@@ -29,3 +29,16 @@
 (define-constant platform-fee-percent u2)   ;; 2% fee
 (define-constant fee-denominator u100)      ;; Used to calculate percentage (2/100 = 2%)
 
+;; ============================================
+;; DATA STORAGE
+;; ============================================
+
+;; Counter that tracks how many campaigns have been created
+;; Starts at 0, increments by 1 for each new campaign
+(define-data-var campaign-nonce uint u0)
+
+;; USDCx token contract address on Stacks
+;; NOTE: Replace this with the actual USDCx SIP-010 token contract principal
+;; This is the stablecoin used for all donations
+(define-constant usdcx-token 'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-USD)
+
