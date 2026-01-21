@@ -318,3 +318,26 @@
 ;; ADMIN FUNCTIONS
 ;; ============================================
 
+;; EMERGENCY: Deactivate a campaign
+;; Only the contract owner can call this
+;; Useful for stopping fraudulent campaigns
+;; 
+;; Parameters:
+;;   - campaign-id: which campaign to deactivate
+;; Returns: true if successful
+(define-public (deactivate-campaign (campaign-id uint))
+    (let
+        (
+            (campaign (unwrap! (map-get? campaigns campaign-id) err-not-found))
+        )
+        ;; Only contract owner can deactivate campaigns
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        
+        ;; Set campaign to inactive (stops new donations)
+        (map-set campaigns campaign-id
+            (merge campaign { active: false })
+        )
+        
+        (ok true)
+    )
+)
