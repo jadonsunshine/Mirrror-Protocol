@@ -241,3 +241,76 @@
     )
 )
 
+;; WITHDRAW FUNDS FROM YOUR CAMPAIGN
+;; Can only be called by the campaign creator
+;; Can only withdraw if goal is reached OR deadline has passed
+;; Automatically deducts 2% platform fee
+;; 
+;; Parameters:
+;;   - campaign-id: which campaign to withdraw from
+;; Returns: total raised, platform fee, and amount transferred to creator
+(define-public (withdraw (campaign-id uint))
+    (let
+        (
+            ;; Get the campaign details
+            (campaign (unwrap! (map-get? campaigns campaign-id) err-not-found))
+            ;; Total amount raised
+            (total-raised (get total-raised campaign))
+            ;; Calculate 2% platform fee
+            (platform-fee (calculate-platform-fee total-raised))
+            ;; Amount that goes to campaign creator (total - fee)
+            (creator-amount (- total-raised platform-fee))
+        )
+        ;; VALIDATION CHECKS
+        
+        ;; Only the campaign creator can withdraw
+        (asserts! (is-eq tx-sender (get creator campaign)) err-unauthorized)
+        
+        ;; Make sure funds haven't already been withdrawn
+        (asserts! (not (get withdrawn campaign)) err-already-withdrawn)
+        
+        ;; Can withdraw if EITHER:
+        ;; 1. Goal has been reached, OR
+        ;; 2. Deadline has passed (even if goal not reached)
+        (asserts! (or 
+            (>= total-raised (get goal campaign))
+            (>= block-height (get deadline campaign))
+        ) err-campaign-active)
+        
+        ;; Must have funds to withdraw
+        (asserts! (> total-raised u0) err-invalid-amount)
+        
+        ;; IMPORTANT: Mark as withdrawn FIRST to prevent re-entrancy attacks
+        ;; (someone trying to withdraw multiple times before transaction completes)
+        (map-set campaigns campaign-id
+            (merge campaign { withdrawn: true, active: false })
+        )
+        
+        ;; TRANSFER FUNDS
+        
+        ;; Send platform fee (2%) to contract owner
+        (if (> platform-fee u0)
+            (try! (as-contract (contract-call? usdcx-token transfer 
+                platform-fee              ;; 2% fee
+                tx-sender                 ;; From contract
+                contract-owner            ;; To platform owner
+                none)))                   ;; No memo
+            true  ;; If fee is 0, just continue
+        )
+        
+        ;; Send remaining funds (98%) to campaign creator
+        (try! (as-contract (contract-call? usdcx-token transfer 
+            creator-amount            ;; Amount after fee
+            tx-sender                 ;; From contract
+            (get creator campaign)    ;; To campaign creator
+            none)))                   ;; No memo
+        
+        ;; Return success with breakdown of amounts
+        (ok { 
+            total: total-raised,           ;; Total that was raised
+            fee: platform-fee,             ;; 2% platform fee
+            transferred: creator-amount    ;; Amount sent to creator
+        })
+    )
+)
+
