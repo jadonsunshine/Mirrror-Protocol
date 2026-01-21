@@ -105,7 +105,7 @@
 ;; Returns: true if ended, false if still running
 (define-read-only (is-campaign-ended (campaign-id uint))
     (match (map-get? campaigns campaign-id)
-        campaign (>= block-height (get deadline campaign))
+        campaign (>= stacks-block-height (get deadline campaign))
         false
     )
 )
@@ -141,7 +141,7 @@
             ;; Generate new unique campaign ID
             (campaign-id (+ (var-get campaign-nonce) u1))
             ;; Calculate when campaign ends (current block + duration)
-            (deadline (+ block-height duration))
+            (deadline (+ stacks-block-height duration))
         )
         ;; Make sure goal is greater than 0
         (asserts! (> goal u0) err-invalid-amount)
@@ -198,7 +198,7 @@
         ;; Campaign must still be active
         (asserts! (get active campaign) err-campaign-ended)
         ;; Campaign deadline must not have passed
-        (asserts! (< block-height (get deadline campaign)) err-campaign-ended)
+        (asserts! (< stacks-block-height (get deadline campaign)) err-campaign-ended)
         ;; Goal must not already be reached
         (asserts! (< current-raised goal) err-goal-reached)
         ;; Donation amount must be greater than 0
@@ -274,7 +274,7 @@
         ;; 2. Deadline has passed (even if goal not reached)
         (asserts! (or 
             (>= total-raised (get goal campaign))
-            (>= block-height (get deadline campaign))
+            (>= stacks-block-height (get deadline campaign))
         ) err-campaign-active)
         
         ;; Must have funds to withdraw
