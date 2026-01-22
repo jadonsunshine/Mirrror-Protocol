@@ -10,7 +10,7 @@ contract_id = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.usdcx'
 
 [contracts.FundX]
 path = 'contracts/FundX.clar'
-clarity_version = 4
+clarity_version = 3
 epoch = 'latest'
 [repl.analysis]
 passes = [
