@@ -1,97 +1,70 @@
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch" // We will customize this below
-import Image from "next/image"
 
 export function Hero() {
   return (
-    <section className="pt-32 pb-24 bg-slate-50">
+    <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-50">
       <div className="container mx-auto max-w-5xl px-4 text-center">
         
-        {/* The Massive Headline */}
-        <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-slate-900 leading-[1.1] mb-8">
-          Better tools <br />
-          smooth 
-          
-          {/* Floating Icons Inline */}
-          <span className="inline-flex mx-4 align-middle gap-[-10px]">
-             {/* Replace these with your actual 3D icon paths */}
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-soft-md -rotate-12 flex items-center justify-center text-2xl border border-slate-100 relative z-10">
-               💰
-            </div>
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-soft-md rotate-6 flex items-center justify-center text-2xl border border-slate-100 -ml-4 relative z-20">
-               🦄
-            </div>
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-soft-md -rotate-6 flex items-center justify-center text-2xl border border-slate-100 -ml-4 relative z-30">
-               ⚡
-            </div>
-          </span>
-          
-          workflow <br />
-          including same great deal,
-        </h1>
-
-        {/* The Toggle Row */}
-        <div className="flex items-center justify-center gap-4 text-5xl md:text-7xl font-bold tracking-tighter text-slate-900">
-          
-          {/* Custom Giant Toggle */}
-          <div className="relative inline-flex items-center cursor-pointer group">
-             <div className="w-24 h-12 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-1 shadow-inner transition-all">
-                <div className="w-10 h-10 bg-white rounded-full shadow-lg translate-x-12 transition-transform duration-300 ease-out" />
-             </div>
-          </div>
-          
-          <span>annually.</span>
+        {/* 1. The Badge (Your Content) */}
+        <div className="inline-flex items-center rounded-full border border-indigo-100 bg-white px-4 py-1.5 text-sm font-medium text-indigo-600 shadow-sm mb-8 hover:scale-105 transition-transform cursor-default">
+          🚀 Live on Stacks Testnet
         </div>
 
-        {/* The Cards (Pricing Style) */}
-        <div className="grid md:grid-cols-2 gap-6 mt-20 max-w-4xl mx-auto text-left">
-           
-           {/* Free Card */}
-           <div className="bg-white p-8 rounded-[2rem] shadow-soft-xl hover:shadow-2xl transition-all">
-              <div className="flex justify-between items-start mb-8">
-                  <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center text-white">
-                    💎
-                  </div>
-                  <div className="text-right">
-                    <span className="block font-bold text-xl">Free</span>
-                    <span className="text-slate-400">$0/month</span>
-                  </div>
-              </div>
-              <Button className="w-full h-14 rounded-xl bg-slate-50 text-slate-900 hover:bg-slate-100 border border-slate-100 text-lg font-medium mb-8">
-                 Get Started
-              </Button>
-              <div className="text-sm text-slate-500 flex items-center gap-2">
-                 <span className="text-black">✓</span> Nothing but a Hug
-              </div>
-           </div>
+        {/* 2. The Creative Headline (Your Text + Reference Style) */}
+        <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-slate-900 leading-[1.1] mb-8">
+          Crowd funding <br />
+          
+          {/* Middle Line: "for the [Icon] Bitcoin" */}
+          <span className="inline-flex items-center flex-wrap justify-center gap-x-8">
+            for  the
+            {/* Creative Twist: Floating 3D Element #1 */}
+            <span className="inline-flex align-middle">
+               <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-soft-md -rotate-6 flex items-center justify-center text-3xl border border-slate-100 relative z-10 hover:rotate-0 transition-transform duration-300">
+                  ⚡
+               </div>
+            </span>
+            
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+              Bitcoin
+            </span>
+          </span>
+          
+          <br />
 
-           {/* Personal Card */}
-           <div className="bg-white p-8 rounded-[2rem] shadow-soft-xl hover:shadow-2xl transition-all relative overflow-hidden">
-               {/* Subtle gradient blob for 'Personal' feel */}
-               <div className="absolute top-0 right-0 w-32 h-32 bg-slate-100 rounded-bl-[4rem] -z-0" />
-               
-              <div className="flex justify-between items-start mb-8 relative z-10">
-                  <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center text-white shadow-lg shadow-black/30">
-                    ⚡
-                  </div>
-                  <div className="text-right">
-                    <span className="block font-bold text-xl">Personal</span>
-                    <span className="text-slate-400">$69/month</span>
-                  </div>
-              </div>
-              <Button className="w-full h-14 rounded-xl bg-white text-slate-900 border border-slate-200 hover:border-slate-300 text-lg font-medium mb-8 shadow-sm">
-                 View Pricing
-              </Button>
-              <div className="space-y-3">
-                 <div className="text-sm text-slate-500 flex items-center gap-2">
-                    <span className="text-black">✓</span> Full access to tools
-                 </div>
-                 <div className="text-sm text-slate-500 flex items-center gap-2">
-                    <span className="text-black">✓</span> Monthly updates
-                 </div>
-              </div>
-           </div>
+          {/* Bottom Line: "[Icon] Economy" */}
+          <span className="inline-flex items-center flex-wrap justify-center gap-x-4">
+             {/* Creative Twist: Floating 3D Element #2 */}
+             {/* <span className="inline-flex align-middle">
+               <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-soft-md rotate-12 flex items-center justify-center text-3xl border border-slate-100 relative z-10 hover:rotate-0 transition-transform duration-300">
+                  💰
+               </div>
+            </span> */}
+            Economy  .
+          </span>
+            <span className="inline-flex align-middle">
+              
+                  <div className="relative inline-flex items-center cursor-pointer group">
+             <div className="w-24 h-12 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-1 shadow-inner transition-all">
+          <div className="w-10 h-10 bg-white rounded-full shadow-lg translate-x-12 transition-transform duration-300 ease-out" />
+        </div>
+      </div>
+            </span>
+        </h1>
 
+        {/* 3. The Subhead (Your Content) */}
+        <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed mb-10">
+          Fund the next big thing using USDCx. Bring your own liquidity from Ethereum—we handle the bridge instantly.
+        </p>
+
+        {/* 4. The Buttons (Your Content & Layout) */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" className="h-16 px-10 rounded-full text-lg shadow-glow bg-indigo-600 hover:bg-indigo-700 transition-all hover:scale-105">
+              Explore Campaigns
+            </Button>
+            
+            <Button variant="outline" size="lg" className="h-16 px-10 rounded-full text-lg border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all">
+              Bridge to USDCx
+            </Button>
         </div>
 
       </div>
