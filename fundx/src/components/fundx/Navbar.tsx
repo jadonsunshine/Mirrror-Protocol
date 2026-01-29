@@ -10,7 +10,7 @@ export function Navbar() {
         
         {/* 1. Logo */}
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
+          <div className="h-8 w-8 rounded-full bg-gradient-tush. flex items-center justify-center text-white font-bold">
             F
           </div>
           <span className="font-bold text-slate-900">FundX</span>
@@ -18,9 +18,9 @@ export function Navbar() {
 
         {/* 2. Links (Hidden on mobile) */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500">
-          <Link href="#campaigns" className="hover:text-indigo-600 transition-colors">Campaigns</Link>
-          <Link href="#how-it-works" className="hover:text-indigo-600 transition-colors">How it works</Link>
-          <Link href="#bridge" className="hover:text-indigo-600 transition-colors">Bridge</Link>
+          <Link href="#campaigns" className="hover:text-primary. transition-colors">Campaigns</Link>
+          <Link href="#how-it-works" className="hover:text-primary. transition-colors">How it works</Link>
+          <Link href="#bridge" className="hover:text-primary. transition-colors">Bridge</Link>
         </div>
 
         {/* 3. Action */}

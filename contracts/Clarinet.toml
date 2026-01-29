@@ -30,6 +30,3 @@ api_url = 'https://api.hiro.so'
 path = 'contracts/FundXv3.clar'
 clarity_version = 3
 epoch = 'latest'
-
-
-
