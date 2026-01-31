@@ -1,3 +1,4 @@
+import Link from "next/link" // <--- Import Link
 import { Button } from "@/components/ui/button"
 
 export function Hero() {
@@ -36,15 +37,13 @@ export function Hero() {
           <br />
 
           {/* Line 3: "[Icon] Economy [Switch]" */}
-          {/* FIX: The Switch is now INSIDE this flex container so it stays aligned */}
           <span className="inline-flex items-center flex-wrap justify-center gap-x-4 gap-y-2">
             
             <span>Economy.</span>
             
-            {/* The Switch (Aligned & Rebranded) */}
+            {/* The Switch */}
             <span className="inline-flex align-middle ml-2">
               <div className="relative inline-flex items-center cursor-pointer group">
-                {/* Updated to use your new Orange/Pink Gradient */}
                 <div className="w-24 h-12 rounded-full bg-gradient-to-r from-[#FF6B4A] to-[#FF3D71] p-1 shadow-inner transition-all hover:scale-105">
                   <div className="w-10 h-10 bg-white rounded-full shadow-lg translate-x-12 transition-transform duration-300 ease-out" />
                 </div>
@@ -58,15 +57,21 @@ export function Hero() {
           Fund the next big thing using USDCx. Bring your own liquidity from Ethereum—we handle the bridge instantly.
         </p>
 
-        {/* 4. Buttons */}
+        {/* 4. Updated Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="h-16 px-10 rounded-full text-lg shadow-glow hover:scale-105 transition-all">
-              Explore Campaigns
-            </Button>
+            {/* Link to All Campaigns Page */}
+            <Link href="/explore">
+              <Button size="lg" className="h-16 px-10 rounded-full text-lg shadow-glow hover:scale-105 transition-all">
+                Explore Campaigns
+              </Button>
+            </Link>
             
-            <Button variant="outline" size="lg" className="h-16 px-10 rounded-full text-lg border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all">
-              Bridge to USDCx
-            </Button>
+            {/* Link to Create Page */}
+            <Link href="/create">
+              <Button variant="outline" size="lg" className="h-16 px-10 rounded-full text-lg border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all">
+                Start Fundraising
+              </Button>
+            </Link>
         </div>
 
       </div>
