@@ -1,14 +1,10 @@
-
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { StacksProvider } from "@/components/fundx/StacksProvider"; 
+import { StacksProvider } from "@/components/fundx/StacksProvider";
+import { Toaster } from "@/components/ui/sonner"; // <--- Import this
 
-const jakarta = Plus_Jakarta_Sans({ 
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
 
 export const metadata: Metadata = {
   title: "FundX | Crowdfunding on Bitcoin",
@@ -23,11 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={jakarta.variable}>
-        {/* Wrap everything in the Provider */}
         <StacksProvider>
-           {children}
+          {children}
         </StacksProvider>
+        <Toaster position="bottom-right" richColors /> {/* <--- Add this */}
       </body>
-    </html> 
+    </html>
   );
 }
