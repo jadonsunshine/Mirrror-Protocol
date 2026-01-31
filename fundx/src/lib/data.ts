@@ -11,7 +11,7 @@ export interface Campaign {
   creatorImage: string;
   daysLeft: number;
   backers: number;
-  isTrending?: boolean; // <--- NEW FLAG
+  isTrending?: boolean; // Used to determine the hero campaign
 }
 
 export const CAMPAIGNS: Campaign[] = [
@@ -43,7 +43,7 @@ export const CAMPAIGNS: Campaign[] = [
     creatorImage: "https://github.com/shadcn.png",
     daysLeft: 14,
     backers: 1240,
-    isTrending: true // <--- THIS ONE IS THE HERO
+    isTrending: true 
   },
   {
     id: "green-mining",
@@ -58,6 +58,52 @@ export const CAMPAIGNS: Campaign[] = [
     creatorImage: "https://github.com/shadcn.png",
     daysLeft: 21,
     backers: 85,
+    isTrending: false
+  }
+  ,
+  {
+    id: "bitcoin-city",
+    title: "Bitcoin City Initiative",
+    description: "Developing urban infrastructure powered by Bitcoin mining heat recycling. A model for sustainable cities.",
+    category: "Social Impact",
+    location: "El Salvador",
+    raised: 125000,
+    goal: 500000,
+    image: "/campaign-4.jpg", 
+    creator: "CityDAO",
+    creatorImage: "https://github.com/shadcn.png",
+    daysLeft: 120,
+    backers: 450,
+    isTrending: false
+  },
+  {
+    id: "stacks-gaming",
+    title: "Polyverse",
+    description: "An MMORPG where every item is a Bitcoin NFT. Play, earn, and own your assets on the most secure chain.",
+    category: "Gaming",
+    location: "Seoul, South Korea",
+    raised: 8000,
+    goal: 60000,
+    image: "/campaign-5.jpg",
+    creator: "PolyLabs",
+    creatorImage: "https://github.com/shadcn.png",
+    daysLeft: 29,
+    backers: 120,
+    isTrending: false
+  },
+  {
+    id: "liquid-ops",
+    title: "Liquid Ops",
+    description: "Decentralized dev-ops tooling for Clarity smart contracts. Automate your deployments with 100% uptime.",
+    category: "Infrastructure",
+    location: "Berlin, Germany",
+    raised: 14200,
+    goal: 30000,
+    image: "/campaign-6.jpg",
+    creator: "OpsTeam",
+    creatorImage: "https://github.com/shadcn.png",
+    daysLeft: 5,
+    backers: 89,
     isTrending: false
   }
 ];
