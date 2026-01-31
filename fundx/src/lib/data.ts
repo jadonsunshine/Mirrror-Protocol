@@ -11,6 +11,7 @@ export interface Campaign {
   creatorImage: string;
   daysLeft: number;
   backers: number;
+  isTrending?: boolean; // <--- NEW FLAG
 }
 
 export const CAMPAIGNS: Campaign[] = [
@@ -26,7 +27,8 @@ export const CAMPAIGNS: Campaign[] = [
     creator: "DeFi Academy",
     creatorImage: "https://github.com/shadcn.png",
     daysLeft: 45,
-    backers: 340
+    backers: 340,
+    isTrending: false
   },
   {
     id: "defi-for-everyone",
@@ -40,7 +42,8 @@ export const CAMPAIGNS: Campaign[] = [
     creator: "Alex Smith",
     creatorImage: "https://github.com/shadcn.png",
     daysLeft: 14,
-    backers: 1240
+    backers: 1240,
+    isTrending: true // <--- THIS ONE IS THE HERO
   },
   {
     id: "green-mining",
@@ -54,9 +57,20 @@ export const CAMPAIGNS: Campaign[] = [
     creator: "EcoBit",
     creatorImage: "https://github.com/shadcn.png",
     daysLeft: 21,
-    backers: 85
+    backers: 85,
+    isTrending: false
   }
 ];
+
+// Helper: Get the single trending campaign for the center slot
+export function getHeroCampaign() {
+  return CAMPAIGNS.find((c) => c.isTrending) || CAMPAIGNS[0];
+}
+
+// Helper: Get 2 other campaigns for the side slots
+export function getSideCampaigns() {
+  return CAMPAIGNS.filter((c) => !c.isTrending).slice(0, 2);
+}
 
 export function getCampaign(id: string) {
   return CAMPAIGNS.find((c) => c.id === id);
