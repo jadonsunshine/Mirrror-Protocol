@@ -12,31 +12,46 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown, Copy, LogOut, Wallet } from "lucide-react"
+import { toast } from "sonner" // <--- Import Toast
 
 export function ConnectWallet() {
   const { authenticate, signOut, isSignedIn, walletData } = useStacks()
   const [mounted, setMounted] = useState(false)
   const [justConnected, setJustConnected] = useState(false)
-  const [copied, setCopied] = useState(false)
 
-  // 1. Handle Mounting & Animation Trigger
+  // 1. Connection Effect & Toast
   useEffect(() => {
     setMounted(true)
     if (isSignedIn) {
-      // Trigger the "POP" animation
+      // Trigger animations
       setJustConnected(true)
-      const timer = setTimeout(() => setJustConnected(false), 1000) // Reset after 1s
+      
+      // Trigger Toast
+      toast.success("Wallet Connected", {
+        description: "Ready to fund the future.",
+        duration: 3000,
+      })
+
+      const timer = setTimeout(() => setJustConnected(false), 2000)
       return () => clearTimeout(timer)
     }
   }, [isSignedIn])
 
-  // 2. Copy Logic
   const copyAddress = () => {
     if (walletData?.stxAddress) {
       navigator.clipboard.writeText(walletData.stxAddress)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      toast.info("Address Copied", {
+         description: "Copied to clipboard",
+         duration: 2000
+      })
     }
+  }
+
+  const handleDisconnect = () => {
+    signOut()
+    toast.error("Disconnected", {
+       description: "Session ended securely."
+    })
   }
 
   if (!mounted) {
@@ -47,78 +62,82 @@ export function ConnectWallet() {
     )
   }
 
-  // STATE: LOGGED IN (The Command Center)
+  // STATE: LOGGED IN
   if (isSignedIn && walletData?.stxAddress) {
     const addr = walletData.stxAddress
+    const isMainnet = addr.startsWith("SP") // SP = Mainnet, ST = Testnet
 
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            className={`
-              relative rounded-full px-6 font-bold tracking-tight transition-all duration-500
-              ${justConnected 
-                ? "bg-green-500 scale-110 shadow-[0_0_30px_rgba(74,222,128,0.6)] text-white" // The "POP"
-                : "bg-gradient-tush text-white shadow-glow hover:opacity-90 hover:scale-105" // Normal
-              }
-            `}
-          >
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-sm">
-                {addr.slice(0, 4)}...{addr.slice(-4)}
-              </span>
-              <ChevronDown className="w-4 h-4 opacity-70" />
-            </div>
-          </Button>
-        </DropdownMenuTrigger>
+      <div className="relative inline-flex"> {/* Wrapper for positioning the ping */}
         
-        <DropdownMenuContent align="end" className="w-56 rounded-xl p-2 shadow-xl border-slate-100">
-          <DropdownMenuLabel className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            My Account
-          </DropdownMenuLabel>
-          
-          <div className="px-2 py-2 mb-2 bg-slate-50 rounded-lg border border-slate-100">
-             <div className="flex items-center gap-2 mb-1">
-                <Wallet className="w-3 h-3 text-orange-500" />
-                <span className="text-xs font-bold text-slate-700">Stacks Testnet</span>
-             </div>
-             <p className="text-[10px] text-slate-400 font-mono break-all leading-tight">
-               {addr}
-             </p>
-          </div>
+        {justConnected && (
+           <span className="absolute -inset-1 rounded-full bg-green-500 opacity-75 animate-ping duration-1000" />
+        )}
 
-          <DropdownMenuSeparator />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              className={`
+                relative z-10 rounded-full px-6 font-bold tracking-tight transition-all duration-500
+                ${justConnected 
+                  ? "bg-green-500 border-green-400 text-white shadow-lg" // Success State
+                  : "bg-gradient-tush text-white shadow-glow hover:opacity-90 hover:scale-105" // Normal State
+                }
+              `}
+            >
+              <div className="flex items-center gap-2">
+                {/* Status Dot */}
+                <div className={`w-2 h-2 rounded-full ${isMainnet ? "bg-green-300" : "bg-orange-300"} animate-pulse`} />
+                
+                <span className="font-mono text-sm">
+                  {addr.slice(0, 4)}...{addr.slice(-4)}
+                </span>
+                <ChevronDown className="w-4 h-4 opacity-70" />
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
           
-          <DropdownMenuItem 
-            onClick={copyAddress}
-            className="cursor-pointer focus:bg-slate-50 font-medium text-slate-600"
-          >
-            {copied ? (
-               <>
-                 <span className="text-green-600 flex items-center gap-2">
-                    ✓ Copied
-                 </span>
-               </>
-            ) : (
-               <>
-                 <Copy className="w-4 h-4 mr-2 opacity-70" />
-                 Copy Address
-               </>
-            )}
-          </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-60 rounded-xl p-2 shadow-xl border-slate-100 mt-2">
+            <DropdownMenuLabel className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-2">
+              My Wallet
+            </DropdownMenuLabel>
+            
+            {/* Dynamic Network Box */}
+            <div className="mx-1 px-3 py-2 mb-2 bg-slate-50 rounded-lg border border-slate-100">
+               <div className="flex items-center gap-2 mb-1">
+                  <Wallet className={`w-3 h-3 ${isMainnet ? "text-green-600" : "text-orange-500"}`} />
+                  <span className="text-xs font-bold text-slate-700">
+                    {isMainnet ? "Stacks Mainnet" : "Stacks Testnet"}
+                  </span>
+               </div>
+               <p className="text-[10px] text-slate-400 font-mono break-all leading-tight">
+                 {addr}
+               </p>
+            </div>
 
-          <DropdownMenuSeparator />
-          
-          <DropdownMenuItem 
-            onClick={signOut}
-            className="cursor-pointer focus:bg-red-50 focus:text-red-600 text-red-500 font-medium"
-          >
-            <LogOut className="w-4 h-4 mr-2 opacity-70" />
-            Disconnect
-          </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            
+            <DropdownMenuItem 
+              onClick={copyAddress}
+              className="cursor-pointer focus:bg-slate-50 font-medium text-slate-600 py-2.5"
+            >
+               <Copy className="w-4 h-4 mr-2 opacity-70" />
+               Copy Address
+            </DropdownMenuItem>
 
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuSeparator />
+            
+            <DropdownMenuItem 
+              onClick={handleDisconnect}
+              className="cursor-pointer focus:bg-red-50 focus:text-red-600 text-red-500 font-medium py-2.5"
+            >
+              <LogOut className="w-4 h-4 mr-2 opacity-70" />
+              Disconnect
+            </DropdownMenuItem>
+
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     )
   }
 
@@ -126,7 +145,7 @@ export function ConnectWallet() {
   return (
     <Button 
       onClick={authenticate}
-      className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20 px-6"
+      className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20 px-6 transition-all hover:scale-105"
     >
       Connect Wallet
     </Button>

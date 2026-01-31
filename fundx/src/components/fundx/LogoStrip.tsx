@@ -6,8 +6,16 @@ export function LogoStrip() {
       <div className="container mx-auto max-w-5xl px-4">
         
         <div className="flex flex-wrap justify-center items-center gap-16 md:gap-32">
-          
-          {/* 1. BITCOIN (Local SVG) */}
+         
+          <div className="relative h-12 w-40 opacity-40 hover:opacity-100 transition-all duration-500 cursor-default grayscale hover:grayscale-0">
+             <Image 
+               src="/stacks.png" 
+               alt="Stacks" 
+               fill 
+               className="object-contain"
+             />
+          </div>
+         
           <div className="relative h-12 w-40 opacity-40 hover:opacity-100 transition-all duration-500 cursor-default grayscale hover:grayscale-0">
              <Image 
                src="/bitcoin.svg" 
@@ -17,17 +25,9 @@ export function LogoStrip() {
              />
           </div>
 
-          {/* 2. STACKS (Local PNG) */}
-          <div className="relative h-12 w-40 opacity-40 hover:opacity-100 transition-all duration-500 cursor-default grayscale hover:grayscale-0">
-             <Image 
-               src="/stacks.png" 
-               alt="Stacks" 
-               fill 
-               className="object-contain"
-             />
-          </div>
+         
 
-          {/* 3. USDCx (Text - Sea Green Hover) */}
+        
           <div className="flex items-center justify-center h-12 w-40 cursor-default group">
             <span className="text-4xl font-black tracking-tighter text-slate-300 transition-colors duration-300 group-hover:text-[#2E8B57]">
               USDCx

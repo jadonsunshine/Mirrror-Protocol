@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StacksProvider } from "@/components/fundx/StacksProvider";
-import { Toaster } from "@/components/ui/sonner"; // <--- Import this
+import { Toaster } from "@/components/ui/sonner"; 
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
 
@@ -22,7 +22,7 @@ export default function RootLayout({
         <StacksProvider>
           {children}
         </StacksProvider>
-        <Toaster position="bottom-right" richColors /> {/* <--- Add this */}
+        <Toaster position="bottom-right" richColors /> 
       </body>
     </html>
   );
