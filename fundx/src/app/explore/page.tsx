@@ -1,85 +1,105 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Navbar } from "@/components/fundx/Navbar"
 import { Footer } from "@/components/fundx/Footer"
 import { CampaignCard } from "@/components/fundx/CampaignCard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, SlidersHorizontal } from "lucide-react"
+import { Search, ArrowUp, Sparkles } from "lucide-react"
 import { CAMPAIGNS } from "@/lib/data"
 
-// Categories for the filter pills
-const CATEGORIES = ["All", "DeFi", "Mining", "Gaming", "Social Impact", "Infrastructure", "Education"]
+const CATEGORIES = ["All", "DeFi", "Mining", "Gaming", "Social Impact", "Infrastructure"]
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
-  const [visibleCount, setVisibleCount] = useState(6) // Start with 6 items
+  const [visibleCount, setVisibleCount] = useState(3) // Start low to show "Load More"
+  const [showScrollTop, setShowScrollTop] = useState(false)
 
-  // Filter Logic
+  // 1. Scroll Detection for "Back to Top"
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  // 2. Filter Logic
   const filteredCampaigns = useMemo(() => {
     return CAMPAIGNS.filter((c) => {
-      // 1. Text Search
       const matchesSearch = 
         c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
         c.description.toLowerCase().includes(searchQuery.toLowerCase())
       
-      // 2. Category Filter
       const matchesCategory = selectedCategory === "All" || c.category === selectedCategory || (selectedCategory === "DeFi" && c.category.includes("DeFi"))
 
       return matchesSearch && matchesCategory
     })
   }, [searchQuery, selectedCategory])
 
-  // "Load More" handler
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 3)
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 selection:bg-orange-100 font-sans">
+    <main className="min-h-screen bg-slate-50 selection:bg-orange-100 font-sans relative">
       <Navbar />
 
-      <div className="pt-32 pb-20 container mx-auto max-w-7xl px-4">
+      {/* BACKGROUND MESH GRADIENT (Adds Life) */}
+      <div className="absolute top-0 left-0 w-full h-[500px] overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-orange-200/30 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute top-[-10%] right-[10%] w-[500px] h-[500px] bg-purple-200/30 rounded-full blur-[100px] animate-pulse delay-1000" />
+      </div>
+
+      <div className="pt-32 pb-20 container mx-auto max-w-7xl px-4 relative z-10">
         
-        {/* HEADER */}
-        <div className="mb-12 text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-4">
-            Explore the Ecosystem
+        {/* ANIMATED HEADER */}
+        <div className="mb-12 text-center max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm text-xs font-bold text-slate-500 mb-6">
+             <Sparkles className="w-3 h-3 text-orange-500" />
+             <span>{CAMPAIGNS.length} Active Campaigns</span>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight mb-6">
+            Explore the <span className="bg-gradient-tush bg-clip-text text-transparent">Ecosystem</span>
           </h1>
-          <p className="text-lg text-slate-500">
-            Discover verified projects building on the Bitcoin economy.
+          <p className="text-xl text-slate-500 leading-relaxed">
+            Discover verified projects building on the Bitcoin economy. 
+            Fund the builders, own the future.
           </p>
         </div>
 
-        {/* CONTROLS BAR (Sticky) */}
-        <div className="sticky top-24 z-30 bg-white/80 backdrop-blur-md border border-white/20 shadow-soft-sm rounded-2xl p-4 mb-10">
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+        {/* STICKY GLASS CONTROL BAR */}
+        <div className="sticky top-24 z-30 bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft-xl rounded-2xl p-2 mb-10 transition-all duration-300 ring-1 ring-slate-900/5">
+          <div className="flex flex-col md:flex-row gap-2 justify-between items-center p-2">
              
              {/* Search Input */}
-             <div className="relative w-full md:w-96">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+             <div className="relative w-full md:w-96 group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-orange-500 transition-colors" />
                 <Input 
                   placeholder="Search campaigns..." 
-                  className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-orange-500"
+                  className="pl-11 h-12 rounded-xl bg-white/50 border-transparent focus:bg-white focus:border-orange-200 focus:ring-4 focus:ring-orange-500/10 transition-all"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
              </div>
 
-             {/* Category Pills (Scrollable on mobile) */}
-             <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
+             {/* Category Pills */}
+             <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar items-center">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`
-                      px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all
+                      px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300
                       ${selectedCategory === cat 
-                        ? "bg-slate-900 text-white shadow-md" 
-                        : "bg-white text-slate-500 border border-slate-200 hover:border-orange-200 hover:text-orange-600"
+                        ? "bg-slate-900 text-white shadow-lg scale-105" 
+                        : "bg-transparent text-slate-500 hover:bg-white hover:text-slate-900"
                       }
                     `}
                   >
@@ -90,11 +110,15 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* RESULTS GRID */}
+        {/* RESULTS GRID (Staggered Animation) */}
         {filteredCampaigns.length > 0 ? (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {filteredCampaigns.slice(0, visibleCount).map((campaign) => (
-              <div key={campaign.id} className="h-[450px]"> {/* Fixed height for uniformity */}
+            {filteredCampaigns.slice(0, visibleCount).map((campaign, index) => (
+              <div 
+                key={campaign.id} 
+                className="h-[480px] animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-backwards"
+                style={{ animationDelay: `${index * 100}ms` }} // Stagger Effect
+              >
                 <CampaignCard 
                   id={campaign.id}
                   title={campaign.title}
@@ -107,30 +131,29 @@ export default function ExplorePage() {
             ))}
           </div>
         ) : (
-          /* Empty State */
-          <div className="text-center py-20">
-             <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                🔍
+          <div className="text-center py-20 animate-in fade-in zoom-in duration-500">
+             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner">
+                🛸
              </div>
-             <h3 className="text-xl font-bold text-slate-900">No campaigns found</h3>
-             <p className="text-slate-500">Try adjusting your search or category.</p>
+             <h3 className="text-2xl font-bold text-slate-900 mb-2">No campaigns found</h3>
+             <p className="text-slate-500 mb-6">We couldn't find anything matching "{searchQuery}".</p>
              <Button 
-                variant="link" 
+                variant="outline"
                 onClick={() => {setSearchQuery(""); setSelectedCategory("All")}}
-                className="text-orange-600 font-bold mt-2"
+                className="rounded-full border-slate-300 hover:bg-slate-50"
              >
                 Clear Filters
              </Button>
           </div>
         )}
 
-        {/* LOAD MORE (Only if there are more items to show) */}
+        {/* LOAD MORE BUTTON */}
         {filteredCampaigns.length > visibleCount && (
-          <div className="mt-16 text-center">
+          <div className="mt-16 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
             <Button 
               onClick={handleLoadMore}
               variant="outline" 
-              className="h-14 px-8 rounded-full border-2 border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-all"
+              className="h-14 px-10 rounded-full border-2 border-slate-200 text-slate-600 font-bold hover:bg-white hover:border-slate-900 hover:text-slate-900 hover:scale-105 transition-all shadow-sm"
             >
               Load More Campaigns
             </Button>
@@ -138,6 +161,20 @@ export default function ExplorePage() {
         )}
 
       </div>
+
+      {/* FLOATY BACK TO TOP BUTTON */}
+      <div 
+        className={`fixed bottom-8 right-8 z-50 transition-all duration-500 transform ${showScrollTop ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"}`}
+      >
+        <Button
+          onClick={scrollToTop}
+          size="icon"
+          className="h-14 w-14 rounded-full bg-slate-900 text-white shadow-xl hover:bg-gradient-tush hover:scale-110 transition-all duration-300"
+        >
+          <ArrowUp className="h-6 w-6" />
+        </Button>
+      </div>
+
       <Footer />
     </main>
   )
